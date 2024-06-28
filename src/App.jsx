@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
 const App = () => {
@@ -6,6 +6,17 @@ const App = () => {
   const [apiKey, setApiKey] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    chrome.storage.sync.get(['apiKey'], res => {
+      if (res.apiKey) {
+        setApiKey(res.apiKey);
+        setGeneratorType('api');
+      }
+      
+    })
+  }, [])
+
   const handleFill = () => {
     setErrorMessage(false);
     setLoading(true);
@@ -34,6 +45,12 @@ const App = () => {
       });
     });
   };
+
+  const saveOpenApiKey = (value) => {
+    chrome.storage.sync.set({apiKey: value}, () => {
+      setApiKey(value);
+    })
+  }
 
   const fillInputs = async (apiKey, generatorType) => {
     let buildPrompt = () => {
@@ -216,9 +233,9 @@ const App = () => {
         </label>
         <label>
           <input type="radio" name="autofill-method" value="api" checked={generatorType === 'api'} onChange={() => setGeneratorType('api')}/>
-          Use Chat GPT Key
+          Use OpenAPI Key
           <br />
-          <input className='api-key' type="password" name="api-key" id="api-key" placeholder="sk-***" onFocus={(() => setGeneratorType('api'))} onChange={(ev) => {setApiKey(ev.target.value)}}/>
+          <input className='api-key' type="password" name="api-key" id="api-key" placeholder="sk-***" onFocus={(() => setGeneratorType('api'))} onChange={(ev) => {saveOpenApiKey(ev.target.value)}} value={apiKey}/>
         </label>
       </fieldset>
       <div className="action-buttons">
@@ -235,7 +252,8 @@ const App = () => {
           </span>
         </div>
       }
-      
+      <hr />
+      <a className="feedback-link" href="https://autofilly.dev/feedback" target="_blank">Feedback?</a>
     </div>
   );
 }

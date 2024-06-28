@@ -1,11 +1,12 @@
 {
     "manifest_version": 3,
     "name": "Autofilly",
-    "version": "1.0",
+    "version": "1.0.1",
     "description": "At the click of a button, Autofilly will fill form inputs with random data or use your OpenAI api key for human readable values.",
     "permissions": [
       "activeTab",
-      "scripting"
+      "scripting",
+      "storage"
     ],
     "action": {
       "default_popup": "index.html"
